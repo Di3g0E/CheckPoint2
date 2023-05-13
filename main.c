@@ -3,25 +3,9 @@
 #include "Agenda.h"
 
 int main() {
-    //  Creamos las variables que vamos a utilizar. IMPORTANTE crear aquí las variables que usan la memoria dinámica para poder usarlas en las funciones
     int opcion = -1;
-    int *cont = malloc(sizeof (int));
-    int *max = malloc(sizeof (int));
-    contacto *agenda = malloc(MAX * sizeof(contacto));
-
-    *max = MAX;
-    *cont = 0;
 
     crearAgendaBinaria();   //  Crea el fichero binario 'agenda.dat'
-
-    //  Llenar la agenda con datos de ejemplo
-    for (int i = 0; i < max[0]; i++) {
-        sprintf(agenda[i].nombre, "Nombre%d", i + 1);
-        sprintf(agenda[i].apellidos, "Apellidos%d", i + 1);
-        sprintf(agenda[i].telefono, "Telefono%d", i + 1);
-        agenda[i].edad = 20 + i;
-        agenda[i].tipoContacto = FAVORITO;
-    }
 
     // MENU INICIO:
     do {
@@ -42,19 +26,18 @@ int main() {
                 nuevaPersona();
                 break;
             case 3:
-                borrarPersona(agenda, cont, max);
+                listaPersonas();
+                printf("\n");
+                borrarPersona();
                 break;
             case 4:
-                guardarAgenda(max, agenda);
+                guardarAgenda();
                 break;
             case 5:
                 leerAgenda();
                 break;
             case 0:
-                //  Liberamos toda la memoria dinámica que hemos utilizado y salimos
-                free(max);
-                free(cont);
-                free(agenda);
+                remove("agenda.dat");
                 printf("Saliendo...\n");
                 break;
             default:

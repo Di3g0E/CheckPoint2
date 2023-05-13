@@ -5,39 +5,34 @@
 #ifndef AGENDADEFINITIVA_AGENDA_H
 #define AGENDADEFINITIVA_AGENDA_H
 
-#define MAX 5   //  Espacio inicial de la agenda
 #define MAX_CONTACTO 50   //    Espacio nombres
-#define MAX_LINEA 200  //   Espacio línea de fichero
-#define FICHERO "agenda.dat"   //  Crea el fichero binario
+#define MAX_LINEA 200  //   Espacio lÃ­nea de fichero
 
 enum tipoCont {
     FAVORITO,
     CONOCIDO,
     TRABAJO
-};  //  Creación de las opciones de tipo de contacto que hay en la agenda
+};  //  CreaciÃ³n de las opciones de tipo de contacto que hay en la agenda
 
 typedef struct {
+    int id;
     char nombre[MAX_CONTACTO];
     char apellidos[MAX_CONTACTO];
     char telefono[MAX_CONTACTO];
     short int edad;
     enum tipoCont tipoContacto;
-} contacto; //  Creación del nuevo tipo de datos 'contacto'
+} contacto; //  CreaciÃ³n del nuevo tipo de datos 'contacto'
+
+int crearAgendaBinaria();
 
 int listaPersonas();
 
 int nuevaPersona();
 
-int borrarPersona(contacto *agenda, int *cont, int *max);
+int borrarPersona();
 
-int guardarAgenda(int *max, contacto *agenda);
+int guardarAgenda();
 
 int leerAgenda();
-
-int crearAgendaBinaria();
-
-int guardarAgendaBinario(int max);
-
-int leerAgendaBinario();
 
 #endif //AGENDADEFINITIVA_AGENDA_H
