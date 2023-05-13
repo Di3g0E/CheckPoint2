@@ -20,14 +20,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="84044cc3-2c02-4953-bd55-4c05b59b5a4b" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Agenda.c" beforeDir="false" afterPath="$PROJECT_DIR$/Agenda.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Agenda.h" beforeDir="false" afterPath="$PROJECT_DIR$/Agenda.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/main.c" afterDir="false" />
-    </list>
+    <list default="true" id="84044cc3-2c02-4953-bd55-4c05b59b5a4b" name="Changes" comment="check point, case todo correcto, hay algún fallito pequeno" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -97,22 +90,23 @@
       <updated>1683919513143</updated>
       <workItem from="1683919514685" duration="4083000" />
       <workItem from="1683957856872" duration="4215000" />
-      <workItem from="1683962304735" duration="1308000" />
+      <workItem from="1683962304735" duration="1677000" />
     </task>
+    <task id="LOCAL-00001" summary="check point, case todo correcto, hay algún fallito pequeno">
+      <created>1683964611001</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1683964611001</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/main.c</url>
-          <line>33</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="check point, case todo correcto, hay algún fallito pequeno" />
+    <option name="LAST_COMMIT_MESSAGE" value="check point, case todo correcto, hay algún fallito pequeno" />
   </component>
 </project>
