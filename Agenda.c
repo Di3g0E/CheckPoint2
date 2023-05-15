@@ -1,169 +1,267 @@
 //
-// Created by Diego on 11/05/2023.
+// Created by Diego on 14/05/2023.
 //
 
-#include <stdlib.h>
-#include <stdio.h>
 #include "Agenda.h"
+#include <stdio.h>
 
-int crearAgendaBinaria() {
-    FILE *ficheroBinario = fopen("agenda.dat", "rb");
-    if (ficheroBinario == NULL) {
-        ficheroBinario = fopen("agenda.dat", "wb");
-        if (ficheroBinario == NULL) {
-            perror("Error al crear el fichero binario.\n");
+#define MAX_LINEA 100   //  Cantidad máxima que entra en una línea de registro
+
+
+int numRegistros() {
+    //  Abrimos el fichero en formato de lectura:
+    FILE *fb = fopen("agenda.dat", "w");
+    if (fb == NULL) {
+        perror("Error de apertura.\n");
+        return -1;
+    }
+
+    //  Guardamos la posición final del fichero y la comparamos con la cantidad de registros de tipo contacto que puede contener:
+    fseek(fb, 0, SEEK_END);
+    int posicionFinal = ftell(fb);
+    fseek(fb, 0, SEEK_SET);
+
+    int numContactos = posicionFinal / sizeof (contacto);
+
+    //  Cerramos el fichero:
+    if (fclose(fb) != 0) {
+        perror("Error de clausura.\n");
+        return -1;
+    }
+
+    return numContactos;
+}   //  Indica el número de registros que tiene nuestro fichero binario.
+
+int crearListaContactos() {
+    FILE *fb = fopen("agenda.dat", "w");
+    if (fb == NULL) {
+        fb = fopen("agenda.dat", "w");
+        if (fb == NULL) {
+            perror("Error al crear el fichero.\n");
             return -1;
-        } else fclose(ficheroBinario);
-    } else fclose(ficheroBinario);
+        } else fclose(fb);
+    } else fclose(fb);
+    return 0;
 }
 
-int listaPersonas() {
-    //  Abrimos el fichero en modo lectura:
+int mostrarLista() {
+    //  Abrir fichero binario en formato de lectura:
     FILE *fb = fopen("agenda.dat", "rb");
     if (fb == NULL) {
         perror("Error de apertura.\n");
         return -1;
     }
 
-    //  Realizamos la operación de lectura:
-    contacto contacto1;
+    //  Pasarle el valor de cada registro a la variable tipo contacto y postrarla por pantalla:
+    contacto agenda;
+    //int numContacto = numRegistros();
 
-    fread(&contacto1, sizeof (contacto), 1, fb);
+    //if (numContacto < 1) printf("No hay contactos en la lista.\n");
+    //else {
+    printf("Lista de contactos:\n");
+    fread(&agenda, sizeof(contacto), 1, fb);
     while (!feof(fb)) {
-        printf("%i; %s; %s; %s; %i; %s\n", contacto1.id, contacto1.nombre, contacto1.apellidos, contacto1.telefono, contacto1.edad, contacto1.tipoContacto);
-        fread(&contacto1, sizeof (contacto), 1, fb);
+        printf("%i; %s; %s; %s; %i; ", agenda.id, agenda.nombre, agenda.apellidos, agenda.telefono, agenda.edad);
+        switch (agenda.tipoContacto) {
+            case 1:
+                printf("FAVORITO\n");
+                break;
+            case 2:
+                printf("CONOCIDO\n");
+                break;
+            case 3:
+                printf("TRABAJO\n");
+                break;
+            default:
+                printf("Sin tipo\n");
+                break;
+        }
+        fread(&agenda, sizeof(contacto), 1, fb);
     }
+    //}
 
-    //  Cerramos el fichero:
-    fclose(fb);
-
-    return 0;
-}
-
-int nuevaPersona() {
-    contacto nuevo;
-
-    printf("Ecribe los datos del nuevo contacto:\n"
-           " ID: ");
-    scanf("%i", &nuevo.id);
-
-    printf("Nombre: ");
-    scanf("%s", &nuevo.nombre);
-
-    fflush(stdin);  // Este comando limpia el buffer y nos permite asignar los valores por teclados con menos errores
-    printf("Apellidos: ");
-    scanf("%[^\n]", &nuevo.apellidos);  //  "%[^\n]" le indica al 'scanf()' que guarde todos los datos que vayan entrando hasta el siguiente salto de línea
-    fflush(stdin);
-
-    printf("Telefono: ");
-    scanf("%s", &nuevo.telefono);
-
-    printf("Edad: ");
-    scanf("%d", &nuevo.edad);
-
-    printf("Tipo de contacto (FAVORITO, CONOCIDO, TRABAJO): ");
-    scanf("%d", &nuevo.tipoContacto);
-    fflush(stdin);
-
-    //  Una vez guardados los datos en la variable nuevo los guardamos en nuestro fichero binario.
-    //  Abrimos el fichero:
-    FILE *fb = fopen("agenda.dat", "ab");
-    if (fb == NULL) {
-        perror("Error de apertura del fichero.\n");
+    //  Cerrar fichero binario:
+    if (fclose(fb) != 0) {
+        perror("Error de clausura.\n");
         return -1;
     }
 
-    //  Guardamos los datos al final del fichero:
-    fwrite(&nuevo, sizeof (contacto), 1, fb);
-
-    //  Cerramos el fichero:
-    fclose(fb);
-
     return 0;
 }
 
-int borrarPersona() {
-    int id = -1, confirmar = -1;
+int aniadirContacto() {
 
-    //  Pedimos el 'id' del contacto que queremos eliminar;
-    printf("Indica el numero de contacto que quieres eliminar: ");
+    //  Pedimos al usuario los datos del contacto:
+    contacto nuevo;
+    int tipoContacto;
+
+    printf("Escribe los datos del contacto\n"
+           " Id:");
+    scanf("%i", &nuevo.id);
+    fflush(stdin);
+
+    printf(" Nombre:");
+    scanf("%s", &nuevo.nombre);
+    fflush(stdin);
+
+    printf(" Apellidos:");
+    scanf("%[^\n]", &nuevo.apellidos);
+    fflush(stdin);
+
+    printf(" Telefono:");
+    scanf("%s", &nuevo.telefono);
+    fflush(stdin);
+
+    printf(" Edad:");
+    scanf("%i", &nuevo.edad);
+    fflush(stdin);
+
+    printf(" Tipo de contacto (1 - FAVORITO, 2 - CONOCIDO, 3 - TRABAJO):");
+    scanf("%i", &tipoContacto);
+    fflush(stdin);
+    switch (tipoContacto) {
+        case 1:
+            nuevo.tipoContacto = FAVORITO;
+            break;
+        case 2:
+            nuevo.tipoContacto = CONOCIDO;
+            break;
+        case 3:
+            nuevo.tipoContacto = TRABAJO;
+            break;
+        default:
+            nuevo.tipoContacto = CONOCIDO;
+            break;
+    }
+
+    //  Abrimos fichero binario en formato de escritura que nos permita añadir al final ('append'):
+    FILE *fb = fopen("agenda.dat", "ab");
+    if (fb == NULL) {
+        perror("Error de apertura.\n");
+        return -1;
+    }
+
+    //  Guardamos los datos del nuevo contacto en el fichero:
+    fwrite(&nuevo, sizeof (contacto), 1, fb);
+
+    //  Cerramos el fichero:
+    if (fclose(fb) != 0) {
+        perror("Error de clausura.\n");
+        return -1;
+    }
+
+    printf("\nContacto aniadido. \n");
+    return 0;
+}
+
+int eliminarContacto(){
+    //  Iprimimos la lista de contactos y pedimos el 'id' del contacto a eliminar:
+    int id = -1, confirm = -1;
+
+    mostrarLista();
+    printf("\n");
+    printf("Indica el 'id' del contacto que quieres eliminar:\n");
     scanf("%i", &id);
 
-    //  Confirmación al usuario:
-    printf("¿Quiere confirmar la eliminacion del contacto?\n"
-           "\t0 - SI\n"
-           "\t1 - NO\n");
-    scanf("%i", &confirmar);
-    if (confirmar == 0) {
+    //  Confirmamos la eliminación:
+    printf("Continuar con la eliminacion:\n"
+           "\t0 - Continuar.\n"
+           "\t1 - Cancelar la operacion.\n");
+    scanf("%i", &confirm);
 
-        //  Abrimos fichero de forma que podamos leer y escribir:
-        FILE *fb = fopen("agenda.dat", "rb+");
+    if (confirm == 0) {
+        //  Abrimos el fichero binario en modo lectura y creamos uno temporal en modo escrituro:
+        FILE *fb = fopen("agenda.dat", "rb");
         if (fb == NULL) {
-            perror("Error al abrir.\n");
+            perror("Error de apertura.\n");
             return -1;
         }
 
-        //  Creamos un fichero temporal en el que guardaremos los datos:
-        FILE *fb_copy = fopen("ficheroTemporal", "ab");
-        if (fb_copy == NULL) {
-            perror("Error al crear.\n");
-            return -1;
+        FILE *fbTemporal = fopen("temporal.dat", "ab");
+        if (fbTemporal == NULL) {
+            fbTemporal = fopen("temporal.dat", "ab");
+            if (fbTemporal == NULL) {
+                perror("Error de creacion.\n");
+                return -1;
+            }
         }
 
+        //  Copiamos todos los datos en el nuevo fichero obviando el que queremos eliminar:
         contacto registro;
-        fread(&registro, sizeof (contacto), 1, fb);
-        while (!feof(fb)) {
-            if (id != registro.id) {
-                fwrite(&registro, sizeof (contacto), 1, fb_copy);
-                fread(&registro, sizeof (contacto), 1, fb);
-            } else fread(&registro, sizeof (contacto), 1, fb);
 
+        fread(&registro, sizeof(contacto), 1, fb);
+        while (!feof(fb)) {
+            if (id == registro.id) fread(&registro, sizeof(contacto), 1, fb);
+            else {
+                fwrite(&registro, sizeof (contacto), 1, fbTemporal);
+                fread(&registro, sizeof(contacto), 1, fb);
+            }
         }
 
-        //  Cerramos los ficheros, el principal y el temporal:
-        fclose(fb);
-        fclose(fb_copy);
+        //  Cerramos los ficheros:
+        if (fclose(fbTemporal) != 0) {
+            perror("Error de claurura.\n");
+            return -1;
+        }
+        if (fclose(fb) != 0) {
+            perror("Error de claurura.\n");
+            return -1;
+        }
 
-        //  Eliminamos el fichero principal y renombramos el temporal:
+        //  Eliminamos el fichero principal 'agenda.dat' y renombramos el temporal 'temporal.dat':
         remove("agenda.dat");
-        rename("ficheroTemporal", "agenda.dat");
-    }
+        rename("temporal.dat", "agenda.dat");
+
+        printf("\nContacto eliminado.\n");
+    } else printf("\nOperacion cancelada.\n");
 
     return 0;
 }
 
 int guardarAgenda() {
-    char nombre;
+    //  Pedir el nombre del fichero de texto en el que se va a guardar la agenda:
+    char nombre[MAX_CONTACTO];
 
-    //  Abrimos el fichero en modo lectura:
+    printf("\nIndica el nombre de la agenda (agenda.txt):");
+    scanf("%s", &nombre);
+
+    //  Abrir fichero binario en formato de lectura y crear fichero de texto en formato de escritura:
     FILE *fb = fopen("agenda.dat", "rb");
     if (fb == NULL) {
         perror("Error de apertura.\n");
         return -1;
     }
 
-    //  Pedimos el nombre del fichero al que queremos acceder:
-    printf("Escribe el nombre de la agenda ('agenda.txt'): ");
-    scanf("%s", &nombre);
-
-    //  Abrimos el fichero de texto en modo escritura;
-    FILE *ft = fopen(&nombre, "w");
+    FILE *ft = fopen(nombre, "w");
     if (ft == NULL) {
-        perror("Error de apertura.\n");
+        perror("Error de creacion.\n");
         return -1;
     }
 
+    //  Guardar los registros del fichero binario en el fichero de texto:
+    contacto registro;
 
-    //  Realizamos la operación de lectura:
-    contacto contacto1;
-
-    fread(&contacto1, sizeof (contacto), 1, fb);
+    fread(&registro, sizeof (contacto), 1, fb);
     while (!feof(fb)) {
-        fprintf(ft, "%d; %s; %s; %s; %d; %d\n", contacto1.id, contacto1.nombre, contacto1.apellidos, contacto1.telefono, contacto1.edad, contacto1.tipoContacto);
-        fread(&contacto1, sizeof (contacto), 1, fb);
+        fprintf(ft, "%i; %s; %s; %s; %i; ", registro.id, registro.nombre, registro.apellidos, registro.telefono, registro.edad);
+        switch (registro.tipoContacto) {
+            case 1:
+                fprintf(ft, "FAVORITO\n");
+                break;
+            case 2:
+                fprintf(ft, "CONOCIDO\n");
+                break;
+            case 3:
+                fprintf(ft, "TRABAJO\n");
+                break;
+            default:
+                fprintf(ft, "Sin tipo.\n");
+                break;
+        }
+        fread(&registro, sizeof (contacto), 1, fb);
     }
 
-    //  Cerramos el fichero:
+    //  Cerrar los ficheros:
     if (fclose(ft) != 0) {
         perror("Error de clausura.\n");
         return -1;
@@ -172,35 +270,39 @@ int guardarAgenda() {
         perror("Error de clausura.\n");
         return -1;
     }
+
+    printf("Agenda guardada.\n");
     return 0;
 }
 
-int leerAgenda() {
-    int linea[MAX_LINEA];
-    char nombre;
+int mostrarAgenda() {
+    //  Pedimos el nombre de la agenda a imprimir:
+    char nombre[MAX_CONTACTO];
 
-    //  Pedimos el nombre del fichero al que queremos acceder:
-    printf("Escribe el nombre de la agenda ('agenda.txt'): ");
+    printf("Indica el nombre de la agenda (agenda.txt):");
     scanf("%s", &nombre);
 
-    //  Abrimos el fichero:
-    FILE *fichero = fopen(&nombre, "r");
-    if (fichero == NULL) {
-        printf("Error de apertura\n");
+    //  Abrimos el fichero de texto en formato de lectura:
+    FILE *ft = fopen(nombre, "r");
+    if (ft == NULL) {
+        perror("Error de apertura.\n");
         return -1;
     }
 
-    //  Realizamos la operación de lectura y escritura por pantalla:
-    printf("\nContenido:\n-------\n");
-    while (!feof(fichero)) {
-        fgets(linea, sizeof(linea-1), fichero);
-        printf("%s", linea);
-    }
-    printf("-------\n");
+    // Imprimir por pantalla los contactos:
+    char linea[MAX_LINEA];
 
-    //  Cerramos el fichero:
-    if (fclose(fichero) != 0) {
-        perror("Error en clausura de fichero\n");
+    printf("\nAgenda:\n---------\n");
+    fgets(linea, sizeof (linea), ft);
+    while (!feof(ft)) {
+        printf("%s", linea);
+        fgets(linea, sizeof (linea), ft);
+    }
+    printf("---------\n");
+
+    //  Cerrar fichero:
+    if (fclose(ft) != 0) {
+        perror("Error de clausura.\n");
         return -1;
     }
 
